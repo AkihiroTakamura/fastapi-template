@@ -18,9 +18,8 @@ passlib = {extras = ["bcrypt"], version = "*"}
 sqlalchemy = "*"
 alembic = "*"
 psycopg2-binary = "*"
-databases = {extras = ["postgresql"], version = "*"}
 loguru = "*"
-asyncpg = "*"
+pydantic = {extras = ["email"], version = "*"}
 
 [requires]
 python_version = "3.8"

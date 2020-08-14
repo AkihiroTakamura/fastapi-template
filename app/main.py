@@ -1,56 +1,36 @@
-from fastapi import FastAPI, Depends, Header, HTTPException, status
+from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 
-from app.routers import items, users
+from app.core.config import (
+    ALLOWED_HOSTS,
+    API_PREFIX,
+    DEBUG,
+    PROJECT_NAME,
+    VERSION,
+)
 
-from app.core.events import create_start_app_handler, create_stop_app_handler
-
-tags_metadata = [
-    {
-        "name": "users",
-        "description": "Operations with users."
-        "The **login** logic is also here.",
-    },
-    {
-        "name": "items",
-        "description": "Manage items. So _fancy_ they have their own docs.",
-        "externalDocs": {
-            "description": "Items external docs",
-            "url": "https://fastapi.tiangolo.com/",
-        },
-    },
-]
-
+from app.api.routes import token
+from app.api.api import router as api_router, tags_metadata
+from app.api.depends import SessionLocal
+from app.db.init_data import init_db
 
 app = FastAPI(
-    title="FastAPI Application Template",
-    description="None",
-    version="0.1.0",
+    title=PROJECT_NAME,
+    version=VERSION,
+    debug=DEBUG,
     openapi_tags=tags_metadata,
 )
 
-app.add_event_handler("startup", create_start_app_handler(app))
-app.add_event_handler("shutdown", create_stop_app_handler(app))
-
-
-async def get_token_header(x_token: str = Header(...)):
-    if x_token != "fake-super-secret-token":
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="X-Token header invalid",
-        )
-
-
-app.include_router(
-    users.router,
-    prefix="/users",
-    tags=["users"],
-    responses={status.HTTP_404_NOT_FOUND: {"description": "Not Found"}},
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_HOSTS or ["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-app.include_router(
-    items.router,
-    prefix="/items",
-    tags=["items"],
-    dependencies=[Depends(get_token_header)],
-    responses={status.HTTP_404_NOT_FOUND: {"description": "Not Found"}},
-)
+db = SessionLocal()
+init_db(db=db)
+
+app.include_router(token.router, tags=["oauth2"], prefix="/token")
+app.include_router(api_router, prefix=API_PREFIX)

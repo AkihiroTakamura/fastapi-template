@@ -12,7 +12,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
 
 from app.core.config import DATABASE_URL  # noqa: E402
-from app.db.base import Base  # noqa: E402
+from app.db import AlchemyBase  # noqa: E402
 
 
 # this is the Alembic Config object, which provides
@@ -27,7 +27,7 @@ fileConfig(config.config_file_name)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = Base.metadata
+target_metadata = AlchemyBase.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
