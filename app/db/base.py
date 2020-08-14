@@ -1,4 +1,4 @@
-from app.db.base_class import Base  # noqa
+from app.db.base_class import Base, database  # noqa
 
 # Import all the models, so that Base has them before Alembic execute
 

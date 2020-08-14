@@ -2,6 +2,8 @@ from fastapi import FastAPI, Depends, Header, HTTPException, status
 
 from app.routers import items, users
 
+from app.core.events import create_start_app_handler, create_stop_app_handler
+
 tags_metadata = [
     {
         "name": "users",
@@ -25,6 +27,9 @@ app = FastAPI(
     version="0.1.0",
     openapi_tags=tags_metadata,
 )
+
+app.add_event_handler("startup", create_start_app_handler(app))
+app.add_event_handler("shutdown", create_stop_app_handler(app))
 
 
 async def get_token_header(x_token: str = Header(...)):
