@@ -1,3 +1,39 @@
+# Getting Stated
+
+## Install
+
+- docker on your local machine
+- vscode
+    - extension `Remote-Containers`
+
+## open with vscode with docker container
+
+open vscode
+
+press `f1` and search `Remote-Containers: Open Folder in Container`
+
+open project file, then start docker container automatically
+
+## debug run
+
+press `f5` on vscode
+
+and access `http://localhost:8000/docs` from browser on local machine
+
+
+## connect postgres in container from client machine
+
+run `docker exec -it [postgres container name or id] /bin/bash`
+
+`psql -U postgres`
+`alter role postgres with password 'postgres'`
+`\q`
+`exit`
+
+and connect like `postgres://postgres:postgres@localhost:5432/postgres`
+with DBeaver, A5, PGAdmin4 and so on
+
+
 # Migrate DB
 
 `alembic` による Database Migration ができる。
